@@ -91,7 +91,7 @@ def generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list):
     #leaf for server, without basic constraints ca=true
     #last certificate
     else:
-
+        print("AO")
         cert = x509.CertificateBuilder().subject_name(
             subject
         ).issuer_name(
