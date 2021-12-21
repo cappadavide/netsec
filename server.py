@@ -16,7 +16,7 @@ def generate_private_rsakey(i,chain_len):
     )
 
     if i == 0: name = "privatekey_root"
-    elif i>0 and i<chain_len: name = str("privatekey_"+i)
+    elif i>0 and i<chain_len: name = f"privatekey_{i}"
     else: name = "privatekey_server"
     
     #Write our key to disk for safe keeping
@@ -112,7 +112,7 @@ def generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list):
 
 
     if i == 0: name = "cert_root"
-    elif i>0 and i<chain_len: name = str("cert_"+i)
+    elif i>0 and i<chain_len: name = f"cert_{i}"
     else: name = "cert_server"
 
     if name == "cert_server": path="../" #certificato del server non va hashato
