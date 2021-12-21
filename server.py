@@ -147,6 +147,8 @@ def main():
     params = set_params(params)
 
     for i in range(1,chain_len+1):
-        
+
         private_key[i] = generate_private_rsakey(i,chain_len)
         cert_chain[i] = generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list)
+
+main()

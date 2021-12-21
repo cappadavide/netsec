@@ -158,7 +158,7 @@ def main():
 
     conn.close()
 
-
+main()
 """
 def parsingDict(cert: x509.Certificate):
     certdict = {'subject': parseName(cert.subject),'issuer': parseName(cert.issuer),
