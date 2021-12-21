@@ -2,7 +2,7 @@ import socket
 import datetime
 from OpenSSL import SSL
 
-context = SSL.Context(method = SSL.TLSv1_METHOD)
+context = SSL.Context(method = SSL.SSLv3_METHOD)
 context.load_verify_locations(cafile=None,capath="../certs")
 context.use_privatekey_file("../privatekey_server.pem")
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)

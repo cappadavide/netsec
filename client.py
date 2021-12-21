@@ -124,7 +124,7 @@ def main():
     trustedCertPath = "../cert_root.pem"
 
     #set ssl version and context
-    context = SSL.Context(method=SSL.TLSv1_METHOD)
+    context = SSL.Context(method=SSL.SSLv3_METHOD)
 
     #verify the chain certificate root
     context.set_verify(SSL.VERIFY_FAIL_IF_NO_PEER_CERT or SSL.VERIFY_PEER)
