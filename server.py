@@ -15,8 +15,8 @@ def generate_private_rsakey(i,chain_len):
         key_size=2048,
     )
 
-    if i == 1: name = "privatekey_root"
-    elif i>1 and i<chain_len: name = str("privatekey_"+i)
+    if i == 0: name = "privatekey_root"
+    elif i>0 and i<chain_len: name = str("privatekey_"+i)
     else: name = "privatekey_server"
     
     #Write our key to disk for safe keeping
@@ -45,7 +45,7 @@ def generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list):
     issuer_list[i]=subject
     
     #root case
-    if i == 1:
+    if i == 0:
         
         cert = x509.CertificateBuilder().subject_name(
             subject
@@ -67,7 +67,7 @@ def generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list):
         ).sign(private_key[i], hashes.SHA256())#Sign our certificate with our private key
         
     #intermediate CA        
-    elif i>1 and i<chain_len:
+    elif i>0 and i<chain_len:
 
         cert = x509.CertificateBuilder().subject_name(
             subject
@@ -111,8 +111,8 @@ def generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list):
         ).sign(private_key[i-1], hashes.SHA256())#Sign our certificate with our private key
 
 
-    if i == 1: name = "cert_root"
-    elif i>1 and i<chain_len: name = str("cert_"+i)
+    if i == 0: name = "cert_root"
+    elif i>0 and i<chain_len: name = str("cert_"+i)
     else: name = "cert_server"
 
     if name == "cert_server": path="../" #certificato del server non va hashato
@@ -146,7 +146,7 @@ def main():
 
     params = set_params(params)
 
-    for i in range(1,chain_len+1):
+    for i in range(chain_len):
 
         private_key[i] = generate_private_rsakey(i,chain_len)
         cert_chain[i] = generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list)
