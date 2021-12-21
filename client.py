@@ -114,7 +114,7 @@ def checkIfRootTrustAnchor(certificates,trustedCertPath):
     
     cert = x509.load_pem_x509_certificate(open(trustedCertPath,"r").read().encode('utf-8'))
 
-    return True if mycert == certificates[-1] else False
+    return True if cert == certificates[-1] else False
 
 def main():
 
