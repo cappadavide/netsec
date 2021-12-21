@@ -4,6 +4,7 @@ from OpenSSL import SSL
 
 context = SSL.Context(method = SSL.TLSv1_METHOD)
 context.load_verify_locations(cafile=None,capath="../certs")
+context.use_privatekey_file("../privatekey_server.pem")
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 conn = SSL.Connection(context,socket=sock)
 conn.bind(('', 4433))
