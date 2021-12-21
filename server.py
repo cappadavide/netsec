@@ -9,6 +9,12 @@ conn = SSL.Connection(context,socket=sock)
 conn.bind(('127.0.0.1', 4433))
 conn.listen(5)
 print("Sono in ascolto...\n")
-while 1:
-    conn, addr = conn.accept()
 
+server, addr = conn.accept()
+
+"""
+server_ssl = SSL.Connection(server_context, server)
+server_ssl.set_accept_state()
+server_ssl.do_handshake()
+server.close()
+"""
