@@ -42,7 +42,7 @@ def generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list):
         x509.NameAttribute(NameOID.ORGANIZATION_NAME, params['ORGANIZATION_NAME']),
         x509.NameAttribute(NameOID.COMMON_NAME, params['COMMON_NAME']),
     ])
-    issuer_list[i]=subject
+    issuer_list.append(subject)
     
     #root case
     if i == 0:
@@ -148,7 +148,7 @@ def main():
 
     for i in range(chain_len):
 
-        private_key[i] = generate_private_rsakey(i,chain_len)
-        cert_chain[i] = generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list)
+        private_key.append(generate_private_rsakey(i,chain_len))
+        cert_chain.append(generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list))
 
 main()
