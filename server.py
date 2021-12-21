@@ -67,7 +67,7 @@ def generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list):
         ).sign(private_key[i], hashes.SHA256())#Sign our certificate with our private key
         
     #intermediate CA        
-    elif i>0 and i<chain_len:
+    elif i>0 and i<chain_len-1:
 
         cert = x509.CertificateBuilder().subject_name(
             subject
