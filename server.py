@@ -10,5 +10,5 @@ conn.bind(('127.0.0.1', 4433))
 conn.listen(5)
 conn.setblocking(0)
 print("Sono in ascolto...\n")
-
+conn, addr = conn.accept()
 
