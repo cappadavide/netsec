@@ -150,5 +150,5 @@ def main():
 
         private_key.append(generate_private_rsakey(i,chain_len))
         cert_chain.append(generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list))
-
+    print(len(private_key),len(issuer_list))
 main()
