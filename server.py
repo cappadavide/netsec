@@ -91,7 +91,6 @@ def generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list):
     #leaf for server, without basic constraints ca=true
     #last certificate
     else:
-        print("AO")
         cert = x509.CertificateBuilder().subject_name(
             subject
         ).issuer_name(
@@ -126,13 +125,13 @@ def generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list):
         
     return cert   
     
-def set_params(params):
+def set_params(params,i):
 
     params['COUNTRY_NAME'] = u"US"
     params['STATE_OR_PROVINCE_NAME'] = u"California"
     params['LOCALITY_NAME'] = u"San Francisco"
     params['ORGANIZATION_NAME'] = u"My Company"
-    params['COMMON_NAME'] = u"mysite.com"
+    params['COMMON_NAME'] = u"mysite{}.com".format(i)
 
     return params
     
@@ -144,11 +143,10 @@ def main():
     cert_chain = []
     chain_len = 3
 
-    params = set_params(params)
+
 
     for i in range(chain_len):
-
+        params = set_params(params,i)
         private_key.append(generate_private_rsakey(i,chain_len))
         cert_chain.append(generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list))
-    print(len(private_key),len(issuer_list))
 main()
