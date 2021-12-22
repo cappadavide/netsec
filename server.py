@@ -20,5 +20,5 @@ server_ssl = SSL.Connection(context, server)
 
 server_ssl.set_accept_state()
 server_ssl.do_handshake()
-print(server_ssl.get_peer_certificate().to_cryptography())
+print(server.get_peer_certificate().to_cryptography())
 server.close()
