@@ -7,9 +7,9 @@ context = SSL.Context(method = SSL.TLSv1_2_METHOD)
 context.set_verify(SSL.VERIFY_PEER or SSL.VERIFY_FAIL_IF_NO_PEER_CERT)
 
 context.load_verify_locations(cafile=None,capath="../certs")
+context.load_client_ca(cafile="../certs/cert_root.pem")
 context.use_certificate_file("../cert_server.pem")
 context.use_privatekey_file("../privatekey_server.pem")
-
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 conn = SSL.Connection(context,socket=sock)

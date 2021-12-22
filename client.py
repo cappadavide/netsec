@@ -1,4 +1,4 @@
-import ssl
+#import ssl
 import socket
 import datetime
 import hashlib
@@ -137,6 +137,7 @@ def main():
     conn.settimeout(5)
     conn.connect((hostname, port))
     conn.setblocking(1)
+    conn.set_connect_state()
     conn.do_handshake()
     conn.set_tlsext_host_name(hostname.encode())
 
