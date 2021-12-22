@@ -11,7 +11,7 @@ context.use_certificate_file("../cert_server.pem")
 context.use_privatekey_file("../privatekey_server.pem")
 
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-#sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 conn = SSL.Connection(context,socket=sock)
 conn.bind(('', 4433))
 conn.listen(5)
