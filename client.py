@@ -127,8 +127,8 @@ def main():
         context = SSL.Context(method=SSL.TLSv1_METHOD)
 
         #verify the chain certificate root
-        context.set_verify(SSL.VERIFY_PEER)
-        #context.load_verify_locations(cafile="../cert_root.pem")
+        context.set_verify(SSL.VERIFY_NONE)
+        context.load_verify_locations(cafile="../cert_root.pem")
 
         #create connection between client and server
         conn = SSL.Connection(context, socket=socket.socket(socket.AF_INET, socket.SOCK_STREAM))
@@ -137,28 +137,27 @@ def main():
         conn.setblocking(1)
         conn.do_handshake()
         conn.set_tlsext_host_name(hostname.encode())
+        """
+        for cert in conn.get_peer_cert_chain():
+            certificates.append(cert.to_cryptography())
+
+        # basic certification
+        for cert in certificates:
+            print(checkCertValidity(cert))
+
+        print(checkIfRootTrustAnchor(certificates, trustedCertPath))
+        print(checkDigitalSignature(certificates))
+
+        print("\nCERTIFICATE PARSING\n")
+        for cert in certificates:
+            parsingString(cert)
+            print("\n")
+        """
+        conn.close()
+
     except:
         print("Errore client")
     
-    for cert in conn.get_peer_cert_chain():
-        
-        certificates.append(cert.to_cryptography())
-
-    #basic certification
-    for cert in certificates:
-        
-        print(checkCertValidity(cert))
-
-    print(checkIfRootTrustAnchor(certificates,trustedCertPath))
-    print(checkDigitalSignature(certificates))
-
-    print("\nCERTIFICATE PARSING\n")
-    for cert in certificates:
-
-        parsingString(cert)
-        print("\n")
-
-    conn.close()
 
 main()
 """

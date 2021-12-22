@@ -10,7 +10,6 @@ try:
     context.use_privatekey_file("../privatekey_server.pem")
     sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     conn = SSL.Connection(context,socket=sock)
-
     conn.bind(('', 4433))
     conn.listen(5)
     print("Sono in ascolto...\n")
@@ -18,6 +17,7 @@ try:
     server, addr = conn.accept()
 
     server_ssl = SSL.Connection(context, server)
+    print(server_ssl.get_peer_certificate())
     server_ssl.set_accept_state()
     server_ssl.do_handshake()
     server.close()
