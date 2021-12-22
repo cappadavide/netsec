@@ -4,7 +4,7 @@ from OpenSSL import SSL
 
 
 context = SSL.Context(method = SSL.TLSv1_2_METHOD)
-context.set_verify(SSL.VERIFY_NONE)
+context.set_verify(SSL.VERIFY_PEER)
 
 context.load_verify_locations(cafile=None,capath="../certs")
 context.use_certificate_file("../cert_server.pem")
