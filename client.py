@@ -131,7 +131,7 @@ def main():
     #context.use_privatekey_file("../client_pkey.pem")
 
     context.load_verify_locations(cafile="../certs/cert_root.pem")
-    context.set_default_verify_paths()
+
 
     #create connection between client and server
     conn = SSL.Connection(context, socket=socket.socket(socket.AF_INET, socket.SOCK_STREAM))
