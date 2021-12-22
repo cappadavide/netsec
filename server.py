@@ -17,7 +17,8 @@ print("Sono in ascolto...\n")
 server, addr = conn.accept()
 
 server_ssl = SSL.Connection(context, server)
-print(server_ssl.get_peer_certificate().to_cryptography())
+
 server_ssl.set_accept_state()
 server_ssl.do_handshake()
+print(server_ssl.get_peer_certificate().to_cryptography())
 server.close()
