@@ -127,7 +127,8 @@ def main():
 
     #verify the chain certificate root
     context.set_verify(SSL.VERIFY_PEER)
-    context.load_verify_locations(cafile="../cert_root.pem")
+    context.use_certificate("../certs/client.pem")
+    #context.load_verify_locations(cafile="../cert_root.pem")
 
     #create connection between client and server
     conn = SSL.Connection(context, socket=socket.socket(socket.AF_INET, socket.SOCK_STREAM))
