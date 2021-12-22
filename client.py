@@ -128,6 +128,7 @@ def main():
     #verify the chain certificate root
     context.set_verify(SSL.VERIFY_PEER)
     context.use_certificate_file("../certs/client.pem")
+    context.use_privatekey_file("../client_pkey.pem")
     context.load_verify_locations(cafile="../certs/cert_root.pem")
 
     #create connection between client and server
