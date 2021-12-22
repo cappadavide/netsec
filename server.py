@@ -3,8 +3,8 @@ import datetime
 from OpenSSL import SSL
 
 context = SSL.Context(method = SSL.TLSv1_METHOD)
-#context.set_verify(SSL.VERIFY_NONE)
-context.set_verify(SSL.VERIFY_FAIL_IF_NO_PEER_CERT)
+context.set_verify(SSL.VERIFY_NONE)
+
 context.load_verify_locations(cafile=None,capath="../certs")
 #context.use_certificate_file("../cert_server.pem")
 #context.use_privatekey_file("../privatekey_server.pem")
