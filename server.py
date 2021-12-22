@@ -8,8 +8,8 @@ context.set_verify(SSL.VERIFY_NONE)
 
 #context.load_verify_locations(cafile=None,capath="../certs")
 
-context.use_certificate_file("../cert_server.pem")
-context.use_privatekey_file("../privatekey_server.pem")
+#context.use_certificate_file("../cert_server.pem")
+#context.use_privatekey_file("../privatekey_server.pem")
 
 sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 #sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
