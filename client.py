@@ -117,26 +117,28 @@ def checkIfRootTrustAnchor(certificates,trustedCertPath):
     return True if cert == certificates[-1] else False
 
 def main():
-
     certificates = []
     hostname = '192.168.1.112'
     port = 4433
     trustedCertPath = "../cert_root.pem"
+    try:
 
-    #set ssl version and context
-    context = SSL.Context(method=SSL.TLSv1_METHOD)
+        #set ssl version and context
+        context = SSL.Context(method=SSL.TLSv1_METHOD)
 
-    #verify the chain certificate root
-    context.set_verify(SSL.VERIFY_PEER)
-    context.load_verify_locations(cafile="../cert_root.pem")
+        #verify the chain certificate root
+        context.set_verify(SSL.VERIFY_PEER)
+        #context.load_verify_locations(cafile="../cert_root.pem")
 
-    #create connection between client and server
-    conn = SSL.Connection(context, socket=socket.socket(socket.AF_INET, socket.SOCK_STREAM))
-    conn.settimeout(5)
-    conn.connect((hostname, port))
-    conn.setblocking(1)
-    conn.do_handshake()
-    conn.set_tlsext_host_name(hostname.encode())
+        #create connection between client and server
+        conn = SSL.Connection(context, socket=socket.socket(socket.AF_INET, socket.SOCK_STREAM))
+        conn.settimeout(5)
+        conn.connect((hostname, port))
+        conn.setblocking(1)
+        conn.do_handshake()
+        conn.set_tlsext_host_name(hostname.encode())
+    except:
+        print("Errore client")
     
     for cert in conn.get_peer_cert_chain():
         
