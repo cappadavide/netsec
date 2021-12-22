@@ -121,43 +121,40 @@ def main():
     hostname = '192.168.1.112'
     port = 4433
     trustedCertPath = "../cert_root.pem"
-    try:
 
-        #set ssl version and context
-        context = SSL.Context(method=SSL.TLSv1_METHOD)
+    #set ssl version and context
+    context = SSL.Context(method=SSL.TLSv1_METHOD)
 
-        #verify the chain certificate root
-        context.set_verify(SSL.VERIFY_NONE)
-        context.load_verify_locations(cafile="../cert_root.pem")
+    #verify the chain certificate root
+    context.set_verify(SSL.VERIFY_PEER)
+    context.load_verify_locations(cafile="../cert_root.pem")
 
-        #create connection between client and server
-        conn = SSL.Connection(context, socket=socket.socket(socket.AF_INET, socket.SOCK_STREAM))
-        conn.settimeout(5)
-        conn.connect((hostname, port))
-        conn.setblocking(1)
-        conn.do_handshake()
-        conn.set_tlsext_host_name(hostname.encode())
-        """
-        for cert in conn.get_peer_cert_chain():
-            certificates.append(cert.to_cryptography())
+    #create connection between client and server
+    conn = SSL.Connection(context, socket=socket.socket(socket.AF_INET, socket.SOCK_STREAM))
+    conn.settimeout(5)
+    conn.connect((hostname, port))
+    conn.setblocking(1)
+    conn.do_handshake()
+    conn.set_tlsext_host_name(hostname.encode())
 
-        # basic certification
-        for cert in certificates:
-            print(checkCertValidity(cert))
+    for cert in conn.get_peer_cert_chain():
+        certificates.append(cert.to_cryptography())
 
-        print(checkIfRootTrustAnchor(certificates, trustedCertPath))
-        print(checkDigitalSignature(certificates))
+    # basic certification
+    for cert in certificates:
+        print(checkCertValidity(cert))
 
-        print("\nCERTIFICATE PARSING\n")
-        for cert in certificates:
-            parsingString(cert)
-            print("\n")
-        """
-        conn.close()
+    print(checkIfRootTrustAnchor(certificates, trustedCertPath))
+    print(checkDigitalSignature(certificates))
 
-    except:
-        print("Errore client")
-    
+    print("\nCERTIFICATE PARSING\n")
+    for cert in certificates:
+        parsingString(cert)
+        print("\n")
+
+    conn.close()
+
+
 
 main()
 """
