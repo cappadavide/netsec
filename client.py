@@ -127,7 +127,7 @@ def main():
     context = SSL.Context(method=SSL.TLSv1_METHOD)
 
     #verify the chain certificate root
-    context.set_verify(SSL.VERIFY_NONE)#SSL.VERIFY_FAIL_IF_NO_PEER_CERT or SSL.VERIFY_PEER)
+    #context.set_verify(SSL.VERIFY_NONE)#SSL.VERIFY_FAIL_IF_NO_PEER_CERT or SSL.VERIFY_PEER)
     #context.load_verify_locations(cafile="../cert_root.pem")
 
     #create connection between client and server
