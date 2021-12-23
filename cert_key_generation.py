@@ -5,6 +5,19 @@ from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import hashes
 import datetime
 
+one_day = datetime.timedelta(1, 0, 0)
+
+def create_crl(issuer,pkey):
+    builder = x509.CertificateRevocationListBuilder()
+    builder = builder.issuer_name(issuer)
+    builder = builder.last_update(datetime.datetime.today())
+    builder = builder.next_update(datetime.datetime.today() + one_day)
+    crl = builder.sign(private_key=pkey, algorithm=hashes.SHA256)
+
+    with open(str("../crl.pem"), "wb") as f:
+        f.write(crl.public_bytes(encoding=serialization.Encoding.PEM),
+        )
+    return crl
 
 def generate_private_rsakey(i,chain_len):
     
@@ -46,7 +59,6 @@ def generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list):
     
     #root case
     if i == 0:
-        
         cert = x509.CertificateBuilder().subject_name(
             subject
         ).issuer_name(
@@ -65,7 +77,7 @@ def generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list):
             critical=False,
         ).add_extension(x509.BasicConstraints(ca=True, path_length=None),critical=True,
         ).sign(private_key[i], hashes.SHA256())#Sign our certificate with our private key
-        
+        create_crl(issuer_list[i],private_key[i])
     #intermediate CA        
     elif i>0 and i<chain_len-1:
 
@@ -143,10 +155,9 @@ def main():
     cert_chain = []
     chain_len = 3
 
-
-
     for i in range(chain_len):
         params = set_params(params,i)
         private_key.append(generate_private_rsakey(i,chain_len))
         cert_chain.append(generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list))
+
 main()
