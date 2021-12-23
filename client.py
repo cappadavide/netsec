@@ -129,24 +129,10 @@ def main():
     print(sock.recv(1024).decode())
     print("prova2")
     ############# Authentication #############
-    context = SSL.Context(method=SSL.TLSv1_2_METHOD)
-
-
-    # verify the chain certificate root
-    context.set_verify(SSL.VERIFY_PEER)
-    context.use_certificate_file("../client.pem")
-    context.use_privatekey_file("../client_pkey.pem")
-
-    context.load_verify_locations(cafile="../certs/cert_root.pem")
-
-    # create connection between client and server
-    ssock = SSL.Connection(context, socket=sock)
-    ssock.settimeout(5)
-    #ssock.connect((hostname, port))
-    ssock.set_connect_state()
-    ssock.do_handshake()
-    ssock.set_tlsext_host_name(hostname.encode())
-    #ssock = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_TLS,certfile="../client.pem",keyfile="../client_pkey.pem",ca_certs="../certs/cert_root.pem")
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    context.load_verify_locations("../certs/cert_root.pem")
+    #context.load_cert_chain(certfile="../client.pem",keyfile="../client_pkey.pem",password=b"passphrase")
+    ssock = context.wrap_socket(sock,server_side=False, server_hostname='192.168.1.112')#ssl_version=ssl.PROTOCOL_TLS,certfile="../client.pem",keyfile="../client_pkey.pem",ca_certs="../certs/cert_root.pem")
     print("prova3")
     ssock.send(('auth login\r\n').encode())
     print(ssock.recv(1024).decode())
