@@ -45,7 +45,7 @@ def parseExtensions(ext: x509.Extensions):
     
     for e in ext:
         
-        if isinstance(e.value,x509.Basisockonstraints):
+        if isinstance(e.value,x509.BasicConstraints):
             
             stringa = f"\n\tPath Length:{e.value.path_length}" if e.value.path_length is not None else ""
             
@@ -166,6 +166,7 @@ def main():
 
 
 main()
+
 """
 def parsingDict(cert: x509.Certificate):
     certdict = {'subject': parseName(cert.subject),'issuer': parseName(cert.issuer),

@@ -120,7 +120,7 @@ def checkIfRootTrustAnchor(certificates,trustedCertPath):
 
 def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect(('192.168.1.112',10025))
+    sock.connect(('192.168.1.112',4433))
     print(sock.recv(1024).decode())
     sock.send(('helo tester.com\r\n').encode())
     print(sock.recv(1024).decode())
@@ -129,7 +129,23 @@ def main():
     print(sock.recv(1024).decode())
     print("prova2")
     ############# Authentication #############
-    ssock = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_TLS,certfile="../client.pem",keyfile="../client_pkey.pem",ca_certs="../certs/cert_root.pem")
+    context = SSL.Context(method=SSL.TLSv1_2_METHOD)
+
+    # verify the chain certificate root
+    context.set_verify(SSL.VERIFY_PEER)
+    context.use_certificate_file("../client.pem")
+    context.use_privatekey_file("../client_pkey.pem")
+
+    context.load_verify_locations(cafile="../certs/cert_root.pem")
+
+    # create connection between client and server
+    ssock = SSL.Connection(context, socket=sock)
+    ssock.settimeout(5)
+    #ssock.connect((hostname, port))
+    ssock.set_connect_state()
+    ssock.do_handshake()
+    ssock.set_tlsext_host_name(hostname.encode())
+    #ssock = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_TLS,certfile="../client.pem",keyfile="../client_pkey.pem",ca_certs="../certs/cert_root.pem")
     print("prova3")
     ssock.send(('auth login\r\n').encode())
     print(ssock.recv(1024).decode())
