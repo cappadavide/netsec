@@ -131,6 +131,7 @@ def main():
     ############# Authentication #############
     context = SSL.Context(method=SSL.TLSv1_2_METHOD)
 
+
     # verify the chain certificate root
     context.set_verify(SSL.VERIFY_PEER)
     context.use_certificate_file("../client.pem")
