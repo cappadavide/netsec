@@ -1,7 +1,7 @@
 import socket
 import datetime
 from time import sleep
-
+import glob
 from OpenSSL import SSL
 import asyncio
 
@@ -10,8 +10,15 @@ from aiosmtpd.smtp import SMTP
 from aiosmtpd.handlers import Sink
 import ssl
 #loop = asyncio.get_event_loop()
+ca_certs = []
+for i in glob.glob("../certs/*.pem"):
+    if "crl" not in i:
+        ca_certs.append(i)
+print(ca_certs)
+ca_certs.append("../cert_server.pem")
+
 context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH,capath="../certs")
-context.load_cert_chain(certfile="../cert_server.pem",keyfile="../privatekey_server.pem",password=b"passphrase")
+context.load_cert_chain(certfile=ca_certs,keyfile="../privatekey_server.pem",password=b"passphrase")
 
 class MyController(Controller):
     def factory(self):
