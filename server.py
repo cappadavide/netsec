@@ -16,7 +16,7 @@ class MyController(Controller):
     def factory(self):
         return SMTP(self.handler,hostname=self.hostname,timeout=300,decode_data=True,auth_required=True,tls_context=context, require_starttls=True,loop=self.loop)
 
-controller = MyController(Sink(),hostname='127.0.0.1',port=10025)
+controller = MyController(Sink(),hostname='192.168.1.112',port=10025)
 controller.start()
 input('SMTP server running. Press Return to stop server and exit.')
 controller.stop()
