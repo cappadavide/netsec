@@ -125,11 +125,12 @@ def main():
     sock.send(('helo tester.com\r\n').encode())
     print(sock.recv(1024).decode())
     sock.send(('starttls\r\n').encode())
+    print("prova1")
     print(sock.recv(1024).decode())
-
+    print("prova2")
     ############# Authentication #############
-    ssock = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_SSLv23)
-
+    ssock = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_TLSv1_2,certfile="../client.pem",keyfile="../client_pkey.pem",ca_certs="../certs/cert_root.pem")
+    print("prova3")
     ssock.send(('auth login\r\n').encode())
     print(ssock.recv(1024).decode())
 

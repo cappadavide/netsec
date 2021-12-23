@@ -11,6 +11,7 @@ from aiosmtpd.handlers import Sink
 import ssl
 #loop = asyncio.get_event_loop()
 context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH,capath="../certs")
+print(context.protocol)
 
 class MyController(Controller):
     def factory(self):

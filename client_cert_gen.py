@@ -58,7 +58,7 @@ def generate_certificate(client_pkey,params):
     ).add_extension(x509.BasicConstraints(ca=True, path_length=None),critical=True,
     ).sign(client_pkey, hashes.SHA256())  # Sign our certificate with our private key
 
-    with open(str("../certs/client.pem"), "wb") as f:
+    with open(str("../client.pem"), "wb") as f:
         f.write(cert.public_bytes(serialization.Encoding.PEM))
 
     return cert
