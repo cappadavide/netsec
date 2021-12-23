@@ -118,50 +118,8 @@ def checkIfRootTrustAnchor(certificates,trustedCertPath):
 
     return True if cert == certificates[-1] else False
 
-def main():
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect(('192.168.1.112',10025))
-    print(sock.recv(1024).decode())
-    sock.send(('helo tester.com\r\n').encode())
-    print(sock.recv(1024).decode())
-    sock.send(('starttls\r\n').encode())
-    print("prova1")
-    print(sock.recv(1024).decode())
-    print("prova2")
-    ############# Authentication #############
-    ssock = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_TLS,certfile="../client.pem",keyfile="../client_pkey.pem",ca_certs="../certs/cert_root.pem")
-    print("prova3")
-    ssock.send(('auth login\r\n').encode())
-    print(ssock.recv(1024).decode())
 
-    ssock.send((base64.b64encode(('francesco.zuppichini@gmail.com').encode())) + ('\r\n').encode())
-    print(ssock.recv(1024).decode())
 
-    ssock.send((base64.b64encode(('********').encode())) + ('\r\n').encode())
-    print(ssock.recv(1024).decode())
-
-    ############# EMAIL #############
-    ssock.send(("MAIL FROM: <francesco.zuppichini@gmail.com>" + '\r\n').encode())
-    print(ssock.recv(1024).decode())
-    ssock.send(("RCPT to: <francesco.zuppichini@gmail.com>" + '\r\n').encode())
-    print(ssock.recv(1024).decode())
-    ssock.send(("DATA" + '\r\n').encode())
-    print(ssock.recv(1024).decode())
-    # start to send the Data
-    ssock.send(("Subject: Test!" + '\r\n').encode())
-    ssock.send(("From: francesco.zuppichini@gmail.com" + '\r\n').encode())
-    ssock.send(("To: francesco.zuppichini@gmail.com" + '\r\n').encode())
-    ssock.send(("Ciaooone" + '\r\n').encode())
-    ssock.send(("\r\n.\r\n").encode())
-    print(ssock.recv(1024).decode())
-    ############# Exit #############
-    ssock.send(("QUIT" + '\r\n').encode())
-    print(ssock.recv(1024).decode())
-
-    ssock.close()
-    sock.close()
-
-"""
 def main():
     certificates = []
     hostname = '192.168.1.112'
@@ -204,7 +162,7 @@ def main():
         print("\n")
 
     conn.close()
-"""
+
 
 
 main()
