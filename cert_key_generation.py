@@ -8,11 +8,12 @@ import datetime
 one_day = datetime.timedelta(1, 0, 0)
 
 def create_crl(issuer,pkey):
+
     builder = x509.CertificateRevocationListBuilder()
     builder = builder.issuer_name(issuer)
     builder = builder.last_update(datetime.datetime.today())
     builder = builder.next_update(datetime.datetime.today() + one_day)
-    crl = builder.sign(private_key=pkey, algorithm=hashes.SHA256)
+    crl = builder.sign(private_key=pkey, algorithm=hashes.SHA256())
 
     with open(str("../crl.pem"), "wb") as f:
         f.write(crl.public_bytes(encoding=serialization.Encoding.PEM),
