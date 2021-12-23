@@ -53,7 +53,7 @@ def generate_certificate(client_pkey,params):
         # Our certificate will be valid for 10 days
         datetime.datetime.utcnow() + datetime.timedelta(days=10)
     ).add_extension(
-        x509.SubjectAlternativeName([x509.DNSName(u"localhost"),x509.IPAdd]),
+        x509.SubjectAlternativeName([x509.DNSName(u"localhost")]),
         critical=False,
     ).add_extension(x509.BasicConstraints(ca=True, path_length=None),critical=True,
     ).sign(client_pkey, hashes.SHA256())  # Sign our certificate with our private key
