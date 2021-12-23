@@ -18,7 +18,7 @@ print(ca_certs)
 ca_certs.append("../cert_server.pem")
 
 context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)#capath="../certs")
-#context.load_cert_chain(certfile="../cert_server.pem",keyfile="../privatekey_server.pem",password=b"passphrase")
+context.load_cert_chain(certfile="../cert_chain.pem",keyfile="../privatekey_server.pem",password=b"passphrase")
 context.load_verify_locations(cafile=None,capath="../certs")
 class MyController(Controller):
     def factory(self):

@@ -131,7 +131,7 @@ def main():
     ############# Authentication #############
     context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
     context.load_verify_locations("../certs/cert_root.pem")
-    #context.load_cert_chain(certfile="../client.pem",keyfile="../client_pkey.pem",password=b"passphrase")
+    context.load_cert_chain(certfile="../client.pem",keyfile="../client_pkey.pem",password=b"passphrase")
     ssock = context.wrap_socket(sock,server_side=False, server_hostname='192.168.1.112')#ssl_version=ssl.PROTOCOL_TLS,certfile="../client.pem",keyfile="../client_pkey.pem",ca_certs="../certs/cert_root.pem")
     print("prova3")
     ssock.send(('auth login\r\n').encode())
