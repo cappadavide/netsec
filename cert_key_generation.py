@@ -4,7 +4,7 @@ from cryptography import x509
 from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import hashes
 import datetime
-
+import ipaddress
 one_day = datetime.timedelta(1, 0, 0)
 
 def create_crl(issuer,pkey):
@@ -118,7 +118,7 @@ def generate_certificate(i,cert_chain,private_key,chain_len,params,issuer_list):
             #Our certificate will be valid for 10 days
             datetime.datetime.utcnow() + datetime.timedelta(days=10)
         ).add_extension(
-            x509.SubjectAlternativeName([x509.DNSName(u"localhost")]),
+            x509.SubjectAlternativeName([x509.DNSName(u"localhost"),x509.IPAddress(ipaddress.IPv4Address('192.168.1.112'))]),
             critical=False,
         ).sign(private_key[i-1], hashes.SHA256())#Sign our certificate with our private key
 
