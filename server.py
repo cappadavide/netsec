@@ -14,13 +14,11 @@ context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH,capath="../certs")
 
 class MyController(Controller):
     def factory(self):
-        return SMTP(self.handler,timeout=300,decode_data=True,auth_required=True,tls_context=context, require_starttls=True,loop=self.loop)
+        return SMTP(self.handler,hostname=self.hostname,timeout=300,decode_data=True,auth_required=True,tls_context=context, require_starttls=True,loop=self.loop)
 
-controller = MyController(Sink())
+controller = MyController(Sink(),hostname='127.0.0.1',port=10025)
 controller.start()
-
-sleep(30)
-
+input('SMTP server running. Press Return to stop server and exit.')
 controller.stop()
 """
 context = SSL.Context(method = SSL.TLSv1_2_METHOD)
