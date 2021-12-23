@@ -1,8 +1,28 @@
 import socket
 import datetime
+from time import sleep
+
 from OpenSSL import SSL
+import asyncio
 
+from aiosmtpd.controller import Controller
+from aiosmtpd.smtp import SMTP
+from aiosmtpd.handlers import Sink
+import ssl
+#loop = asyncio.get_event_loop()
+context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH,capath="../certs")
 
+class MyController(Controller):
+    def factory(self):
+        return SMTP(self.handler,timeout=300,decode_data=True,auth_required=True,tls_context=context, require_starttls=True,loop=self.loop)
+
+controller = MyController(Sink())
+controller.start()
+
+sleep(30)
+
+controller.stop()
+"""
 context = SSL.Context(method = SSL.TLSv1_2_METHOD)
 context.set_verify(SSL.VERIFY_PEER or SSL.VERIFY_FAIL_IF_NO_PEER_CERT)
 
@@ -23,3 +43,4 @@ server_ssl.set_accept_state()
 server_ssl.do_handshake()
 
 server.close()
+"""

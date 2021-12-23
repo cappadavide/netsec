@@ -1,6 +1,8 @@
 #import ssl
 import socket
 import datetime
+import base64
+import ssl
 import hashlib
 from OpenSSL import SSL
 
@@ -43,7 +45,7 @@ def parseExtensions(ext: x509.Extensions):
     
     for e in ext:
         
-        if isinstance(e.value,x509.BasicConstraints):
+        if isinstance(e.value,x509.Basisockonstraints):
             
             stringa = f"\n\tPath Length:{e.value.path_length}" if e.value.path_length is not None else ""
             
@@ -117,6 +119,49 @@ def checkIfRootTrustAnchor(certificates,trustedCertPath):
     return True if cert == certificates[-1] else False
 
 def main():
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect(("192.168.1.112",8025))
+    print(sock.recv(1024).decode())
+    sock.send(('helo tester.com\r\n').encode())
+    print(sock.recv(1024).decode())
+    sock.send(('starttls\r\n').encode())
+    print(sock.recv(1024).decode())
+
+    ############# Authentication #############
+    ssock = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_SSLv23)
+
+    ssock.send(('auth login\r\n').encode())
+    print(ssock.recv(1024).decode())
+
+    ssock.send((base64.b64encode(('francesco.zuppichini@gmail.com').encode())) + ('\r\n').encode())
+    print(ssock.recv(1024).decode())
+
+    ssock.send((base64.b64encode(('********').encode())) + ('\r\n').encode())
+    print(ssock.recv(1024).decode())
+
+    ############# EMAIL #############
+    ssock.send(("MAIL FROM: <francesco.zuppichini@gmail.com>" + '\r\n').encode())
+    print(ssock.recv(1024).decode())
+    ssock.send(("RCPT to: <francesco.zuppichini@gmail.com>" + '\r\n').encode())
+    print(ssock.recv(1024).decode())
+    ssock.send(("DATA" + '\r\n').encode())
+    print(ssock.recv(1024).decode())
+    # start to send the Data
+    ssock.send(("Subject: Test!" + '\r\n').encode())
+    ssock.send(("From: francesco.zuppichini@gmail.com" + '\r\n').encode())
+    ssock.send(("To: francesco.zuppichini@gmail.com" + '\r\n').encode())
+    ssock.send(("Ciaooone" + '\r\n').encode())
+    ssock.send(("\r\n.\r\n").encode())
+    print(ssock.recv(1024).decode())
+    ############# Exit #############
+    ssock.send(("QUIT" + '\r\n').encode())
+    print(ssock.recv(1024).decode())
+
+    ssock.close()
+    sock.close()
+
+"""
+def main():
     certificates = []
     hostname = '192.168.1.112'
     port = 4433
@@ -158,7 +203,7 @@ def main():
         print("\n")
 
     conn.close()
-
+"""
 
 
 main()
@@ -167,11 +212,11 @@ def parsingDict(cert: x509.Certificate):
     certdict = {'subject': parseName(cert.subject),'issuer': parseName(cert.issuer),
             'version': cert.version.value, 'validityPeriod':[cert.not_valid_before,cert.not_valid_after],
             'sn': cert.serial_number,'publickey':cert.public_key().public_bytes(Encoding.PEM, PublicFormat.SubjectPublicKeyInfo),
-            'signalgorithm':cert.signature_algorithm_oid._name,'signature':cert.signature,'extensions':{},'encoded':"cacca"
+            'signalgorithm':cert.signature_algorithm_oid._name,'signature':cert.signature,'extensions':{},'encoded':"casocka"
             }
     for e in cert.extensions:
-        if isinstance(e.value,x509.BasicConstraints):
-            certdict["extensions"]["basicConstraint"] = {'ca':e.value.ca,'pathLen':e.value.path_length,'critical':e.critical}
+        if isinstance(e.value,x509.Basisockonstraints):
+            certdict["extensions"]["basisockonstraint"] = {'ca':e.value.ca,'pathLen':e.value.path_length,'critical':e.critical}
         elif isinstance(e.value,x509.SubjectAlternativeName):
             certdict["extensions"]["subjectAltName"]={}
             for types in [x509.DNSName,x509.RFC822Name,x509.DirectoryName,x509.IPAddress,x509.UniformResourceIdentifier,x509.RegisteredID,x509.OtherName]:

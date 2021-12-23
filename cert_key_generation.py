@@ -15,7 +15,7 @@ def create_crl(issuer,pkey):
     builder = builder.next_update(datetime.datetime.today() + one_day)
     crl = builder.sign(private_key=pkey, algorithm=hashes.SHA256())
 
-    with open(str("../crl.pem"), "wb") as f:
+    with open(str("../certs/crl.pem"), "wb") as f:
         f.write(crl.public_bytes(encoding=serialization.Encoding.PEM),
         )
     return crl
