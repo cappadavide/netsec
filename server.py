@@ -16,10 +16,12 @@ for i in glob.glob("../certs/*.pem"):
         ca_certs.append(i)
 print(ca_certs)
 ca_certs.append("../cert_server.pem")
-
-context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)#capath="../certs")
-context.load_cert_chain(certfile="../cert_chain.pem",keyfile="../privatekey_server.pem",password=b"passphrase")
+context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+context.verify_mode = ssl.CERT_REQUIRED
+#context =ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)#capath="../certs")
 context.load_verify_locations(cafile=None,capath="../certs")
+context.load_cert_chain(certfile="../cert_server.pem",keyfile="../privatekey_server.pem",password=b"passphrase")
+
 class MyController(Controller):
     def factory(self):
         return SMTP(self.handler,hostname=self.hostname,timeout=300,decode_data=True,auth_required=True,tls_context=context, require_starttls=True,loop=self.loop)
