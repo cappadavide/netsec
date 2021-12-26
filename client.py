@@ -136,7 +136,7 @@ def main():
     print("prova3")
     ssock.send(('ehlo tester.com\r\n').encode())
     print(ssock.recv(1024).decode())
-    ssock.send(('auth login\r\n').encode())
+    ssock.send(('AUTH LOGIN\r\n').encode())
     print(ssock.recv(1024).decode())
 
     ssock.send((base64.b64encode(('user1').encode())) + ('\r\n').encode())
