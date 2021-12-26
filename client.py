@@ -120,9 +120,7 @@ def checkIfRootTrustAnchor(certificates,trustedCertPath):
 
 def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect(('192.168.1.112',4433))
-    print(sock.recv(1024).decode())
-    sock.send(('helo tester.com\r\n').encode())
+    sock.connect(('192.168.1.112',587))
     print(sock.recv(1024).decode())
     sock.send(('starttls\r\n').encode())
     print("prova1")
@@ -134,6 +132,8 @@ def main():
     context.load_cert_chain(certfile="../client.pem",keyfile="../client_pkey.pem",password=b"passphrase")
     ssock = context.wrap_socket(sock,server_side=False, server_hostname='192.168.1.112')#ssl_version=ssl.PROTOCOL_TLS,certfile="../client.pem",keyfile="../client_pkey.pem",ca_certs="../certs/cert_root.pem")
     print("prova3")
+    ssock.send(('helo tester.com\r\n').encode())
+    print(ssock.recv(1024).decode())
     ssock.send(('auth login\r\n').encode())
     print(ssock.recv(1024).decode())
 
