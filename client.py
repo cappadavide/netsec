@@ -120,7 +120,7 @@ def checkIfRootTrustAnchor(certificates,trustedCertPath):
 
 def main():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect(('192.168.1.112',587))
+    sock.connect(('192.168.1.112',4433))
     print(sock.recv(1024).decode())
     sock.send(('starttls\r\n').encode())
     print("prova1")
