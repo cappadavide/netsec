@@ -137,10 +137,10 @@ def main():
     ssock.send(('auth login\r\n').encode())
     print(ssock.recv(1024).decode())
 
-    ssock.send((base64.b64encode(('francesco.zuppichini@gmail.com').encode())) + ('\r\n').encode())
+    ssock.send((base64.b64encode(('user1').encode())) + ('\r\n').encode())
     print(ssock.recv(1024).decode())
 
-    ssock.send((base64.b64encode(('********').encode())) + ('\r\n').encode())
+    ssock.send((base64.b64encode(('password1').encode())) + ('\r\n').encode())
     print(ssock.recv(1024).decode())
 
     ############# EMAIL #############
