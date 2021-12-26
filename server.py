@@ -17,6 +17,19 @@ auth_db = {
     b"user2": b"password2",
     b"user3": b"password3",
 }
+class CustomHandler:
+    async def handle_DATA(self, session, envelope):
+        peer = session.peer
+        mail_from = envelope.mail_from
+        rcpt_tos = envelope.rcpt_tos
+        data = envelope.content  # type: bytes
+        # Process message data...
+        print('peer:' + str(peer))
+        print('mail_from:' + str(mail_from))
+        print('rcpt_tos:' + str(rcpt_tos))
+        print('data:' + str(data))
+        return '250 OK'
+
 
 # Name can actually be anything
 def authenticator_func(server, session, envelope, mechanism, auth_data):
@@ -50,9 +63,9 @@ context.load_cert_chain(certfile="../cert_server.pem",keyfile="../privatekey_ser
 
 class MyController(Controller):
     def factory(self):
-        return SMTP(self.handler,authenticator=authenticator_func,hostname=self.hostname,timeout=300,decode_data=True,auth_required=True, auth_require_tls=False,tls_context=context, require_starttls=True,loop=self.loop)
+        return SMTP(self.handler,authenticator=authenticator_func,hostname=self.hostname,timeout=300,decode_data=True,auth_required=True,tls_context=context, require_starttls=True,loop=self.loop)
 
-controller = MyController(Sink(),hostname='192.168.1.112',port=4433)
+controller = MyController(CustomHandler,hostname='192.168.1.112',port=4433)
 controller.start()
 input('SMTP server running. Press Return to stop server and exit.')
 controller.stop()
