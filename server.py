@@ -2,11 +2,13 @@ import socket
 import datetime
 from time import sleep
 import glob
+
+import aiosmtpd
 from OpenSSL import SSL
 import asyncio
 
 from aiosmtpd.controller import Controller
-from aiosmtpd.smtp import SMTP
+from aiosmtpd.smtp import SMTP, Session, Envelope
 from aiosmtpd.handlers import Sink
 import ssl
 from aiosmtpd.smtp import AuthResult, LoginPassword
@@ -29,6 +31,20 @@ class CustomHandler:
         print('rcpt_tos:' + str(rcpt_tos))
         print('data:' + str(data))
         return '250 OK'
+    async def handle_AUTH(server: aiosmtpd.smtp.SMTP, session: Session, envelope: Envelope,auth_data):
+        # For this simple example, we'll ignore other parameters
+        assert isinstance(auth_data, LoginPassword)
+        username = auth_data.login
+        password = auth_data.password
+        # If we're using a set containing tuples of (username, password),
+        # we can simply use `auth_data in auth_set`.
+        # Or you can get fancy and use a full-fledged database to perform
+        # a query :-)
+        if auth_db.get(username) == password:
+            return AuthResult(success=True)
+        else:
+            return AuthResult(success=False, handled=False)
+
 
 
 # Name can actually be anything
