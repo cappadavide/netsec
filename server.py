@@ -50,7 +50,7 @@ class Authenticator:
         self.auth_db = auth_db
     def __call__(self, server, session, envelope, mechanism, auth_data):
         fail_nothandled = AuthResult(success=False, handled=False)
-        if mechanism not in ("LOGIN", "PLAIN"):
+        if mechanism not in (b"LOGIN", b"PLAIN"):
             return fail_nothandled
         if not isinstance(auth_data, LoginPassword):
             return fail_nothandled
