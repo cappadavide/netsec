@@ -94,7 +94,7 @@ context.load_cert_chain(certfile="../cert_server.pem",keyfile="../privatekey_ser
 
 class MyController(Controller):
     def factory(self):
-        return SMTP(self.handler,auth_db=auth_db,hostname=self.hostname,timeout=300,decode_data=True,auth_required=True,tls_context=context, require_starttls=True,loop=self.loop)
+        return SMTP(self.handler,authenticator=authenticator_func,hostname=self.hostname,timeout=300,decode_data=True,auth_required=True,tls_context=context, require_starttls=True,loop=self.loop)
 
 controller = MyController(Sink,hostname='192.168.1.112',port=4433)
 controller.start()
