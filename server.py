@@ -45,6 +45,21 @@ class CustomHandler:
         else:
             return AuthResult(success=False, handled=False)
 
+class Authenticator:
+    def __init__(self):
+        self.auth_db = auth_db
+    def __call__(self, server, session, envelope, mechanism, auth_data):
+        fail_nothandled = AuthResult(success=False, handled=False)
+        if mechanism not in ("LOGIN", "PLAIN"):
+            return fail_nothandled
+        if not isinstance(auth_data, LoginPassword):
+            return fail_nothandled
+        username = auth_data.login
+        password = auth_data.password
+        if auth_db.get(username) == password:
+            return AuthResult(success=True)
+        else:
+            return fail_nothandled
 
 
 # Name can actually be anything
@@ -79,9 +94,9 @@ context.load_cert_chain(certfile="../cert_server.pem",keyfile="../privatekey_ser
 
 class MyController(Controller):
     def factory(self):
-        return SMTP(self.handler,authenticator=authenticator_func,hostname=self.hostname,timeout=300,decode_data=True,auth_required=True,tls_context=context, require_starttls=True,loop=self.loop)
+        return SMTP(self.handler,authenticator=Authenticator,hostname=self.hostname,timeout=300,decode_data=True,auth_required=True,tls_context=context, require_starttls=True,loop=self.loop)
 
-controller = MyController(Sink,hostname='192.168.1.112',port=4433,authenticator=authenticator_func)
+controller = MyController(Sink,hostname='192.168.1.112',port=4433)
 controller.start()
 input('SMTP server running. Press Return to stop server and exit.')
 controller.stop()
