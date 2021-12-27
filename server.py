@@ -87,6 +87,7 @@ ca_certs.append("../cert_server.pem")
 context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 print(context.minimum_version,context.maximum_version)
 
+
 #context.verify_mode = ssl.CERT_REQUIRED
 #print(context.protocol)
 #context =ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)                   #capath="../certs")

@@ -36,7 +36,7 @@ public class Client{
             System.out.println(br.readLine());
             pwr.println("STARTTLS");
             System.out.println(br.readLine());
-            SSLContext sslContext = SSLContext.getInstance("TLS");
+            SSLContext sslContext = SSLContext.getInstance("SSLv3");
             sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), new SecureRandom());
             SSLSocketFactory ssf = sslContext.getSocketFactory();
             //SSLSocket ssock = (SSLSocket) ssf.createSocket("192.168.1.112",4433);
@@ -51,7 +51,7 @@ public class Client{
             
             
 
-            sock.close();  
+            ssock.close();  
 
         }
         catch (Exception e) {
