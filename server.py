@@ -84,7 +84,7 @@ for i in glob.glob("../certs/*.pem"):
         ca_certs.append(i)
 print(ca_certs)
 ca_certs.append("../cert_server.pem")
-context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
 print(context.minimum_version,context.maximum_version)
 
 #context.verify_mode = ssl.CERT_REQUIRED
@@ -97,8 +97,8 @@ context.load_cert_chain(certfile="../cert_server.pem",keyfile="../privatekey_ser
 
 class MyController(Controller):
     def factory(self):
-        return SMTP(self.handler,authenticator=authenticator_func,hostname=self.hostname,timeout=300,decode_data=True,auth_required=True,tls_context=context, require_starttls=True,loop=self.loop)
-
+        smtp = SMTP(self.handler,authenticator=authenticator_func,hostname=self.hostname,timeout=300,decode_data=True,auth_required=True, require_starttls=True,loop=self.loop)
+        smtp.tls_context = context
 controller = MyController(Sink,hostname='192.168.1.112',port=4433)
 controller.start()
 input('SMTP server running. Press Return to stop server and exit.')
