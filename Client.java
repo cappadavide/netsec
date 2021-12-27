@@ -36,7 +36,7 @@ public class Client{
             System.out.println(br.readLine());
             pwr.println("STARTTLS");
             System.out.println(br.readLine());
-            SSLContext sslContext = SSLContext.getInstance("SSLv3");
+            SSLContext sslContext = SSLContext.getInstance("SSL");
             sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), new SecureRandom());
             SSLSocketFactory ssf = sslContext.getSocketFactory();
             //SSLSocket ssock = (SSLSocket) ssf.createSocket("192.168.1.112",4433);
@@ -47,10 +47,8 @@ public class Client{
             System.out.print("Sono qui yeee\n");
             pwr.println("EHLO tester.com");
             System.out.println(br.readLine());
-
-            
-            
-
+            pwr.println("QUIT");
+            System.out.println(br.readLine());
             ssock.close();  
 
         }
