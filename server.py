@@ -13,7 +13,7 @@ from aiosmtpd.handlers import Sink
 import ssl
 from aiosmtpd.smtp import AuthResult, LoginPassword
 
-
+"""
 auth_db = {
     b"user1": b"password1",
     b"user2": b"password2",
@@ -104,8 +104,12 @@ controller = MyController(Sink,hostname='192.168.1.112',port=4433)
 controller.start()
 input('SMTP server running. Press Return to stop server and exit.')
 controller.stop()
+
 """
-context = SSL.Context(method = SSL.TLSv1_2_METHOD)
+
+
+
+context = SSL.Context(method = SSL.TLS_METHOD)
 context.set_verify(SSL.VERIFY_PEER or SSL.VERIFY_FAIL_IF_NO_PEER_CERT)
 
 context.load_verify_locations(cafile=None,capath="../certs")
@@ -125,4 +129,3 @@ server_ssl.set_accept_state()
 server_ssl.do_handshake()
 
 server.close()
-"""
