@@ -1,10 +1,19 @@
 import java.net.*;
 import java.security.*;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.io.*;
 import javax.net.ssl.*;
 import java.util.Base64;
+import java.util.Date;
 import java.nio.charset.StandardCharsets;
+
 public class Client{
+
+    public static boolean checkValidity(X509Certificate c){
+        Date date=new Date();
+        return date.compareTo(c.getNotBefore()) >= 0 && date.compareTo(c.getNotAfter()) <=0;
+    }
 
     public static void main(String[] args) {
 
@@ -54,6 +63,12 @@ public class Client{
 
             System.out.println("Sono qui yeee1\n");
             ssock.startHandshake();
+
+            SSLSession session = ssock.getSession();
+            System.out.println("Lunghezza:"+session.getPeerCertificates().length); 
+            for (Certificate i: session.getPeerCertificates()){
+                System.out.println(Client.checkValidity((X509Certificate)i));
+            }
             System.out.print("Sono qui yeee\n");
             pwr.println("EHLO tester.com");
             System.out.println(br.readLine());
