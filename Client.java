@@ -24,7 +24,6 @@ public class Client{
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(keystore_ca);
             Socket sock = new Socket("192.168.1.112", 4433);
-            
             InputStream inn = sock.getInputStream();
             OutputStream outt = sock.getOutputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(inn));
@@ -38,15 +37,11 @@ public class Client{
             pwr.println("STARTTLS");
             System.out.println(br.readLine());
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            System.out.println(sslContext.getProtocol());
             sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), new SecureRandom());
             SSLSocketFactory ssf = sslContext.getSocketFactory();
             //SSLSocket ssock = (SSLSocket) ssf.createSocket("192.168.1.112",4433);
             SSLSocket ssock = (SSLSocket) ssf.createSocket(sock,"192.168.1.112", 4433, false);
-            for (String s: ssock.getEnabledProtocols()) {           
-                //Do your stuff here
-                System.out.println(s); 
-            }
+            ssock.setUseClientMode(true);
             System.out.print("Sono qui yeee1\n");
             ssock.startHandshake();
             System.out.print("Sono qui yeee\n");
