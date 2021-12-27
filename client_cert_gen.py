@@ -28,7 +28,7 @@ def generate_private_rsakey():
     return key
 
 
-def generate_certificate(client_pkey,params):
+def generate_certificate(client_pkey,private_key,issuer,params):
     # params
     subject = x509.Name([
 
@@ -42,7 +42,7 @@ def generate_certificate(client_pkey,params):
     cert = x509.CertificateBuilder().subject_name(
         subject
     ).issuer_name(
-        subject
+        issuer
     ).public_key(
         client_pkey.public_key()
     ).serial_number(
@@ -55,8 +55,7 @@ def generate_certificate(client_pkey,params):
     ).add_extension(
         x509.SubjectAlternativeName([x509.DNSName(u"localhost")]),
         critical=False,
-    ).add_extension(x509.BasicConstraints(ca=True, path_length=None),critical=True,
-    ).sign(client_pkey, hashes.SHA256())  # Sign our certificate with our private key
+    ).sign(private_key, hashes.SHA256())  # Sign our certificate with our private key
 
     with open(str("../client.pem"), "wb") as f:
         f.write(cert.public_bytes(serialization.Encoding.PEM))
@@ -90,10 +89,10 @@ def main():
 
         )
 
-    #pem_data = open("../certs/cert_root.pem", "rb").read()
-    #issuer_cert = x509.load_pem_x509_certificate(pem_data)
-    #issuer = issuer_cert.subject
-    cert = generate_certificate(client_pkey,params)
+    pem_data = open("../certs/cert_root.pem", "rb").read()
+    issuer_cert = x509.load_pem_x509_certificate(pem_data)
+    issuer = issuer_cert.subject
+    cert = generate_certificate(client_pkey,private_key,issuer,params)
 
 
 main()
