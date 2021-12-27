@@ -84,7 +84,7 @@ for i in glob.glob("../certs/*.pem"):
         ca_certs.append(i)
 print(ca_certs)
 ca_certs.append("../cert_server.pem")
-context = ssl.SSLContext(ssl.PROTOCOL_SSLv3)
+context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
 print(context.minimum_version,context.maximum_version)
 
 
