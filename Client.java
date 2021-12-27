@@ -2,6 +2,7 @@ import java.net.*;
 import java.security.*;
 import java.io.*;
 import javax.net.ssl.*;
+import java.util.Base64;
 import java.nio.charset.StandardCharsets;
 public class Client{
 
@@ -36,20 +37,51 @@ public class Client{
             System.out.println(br.readLine());
             pwr.println("STARTTLS");
             System.out.println(br.readLine());
-            SSLContext sslContext = SSLContext.getInstance("SSL");
+            SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), new SecureRandom());
             SSLSocketFactory ssf = sslContext.getSocketFactory();
             //SSLSocket ssock = (SSLSocket) ssf.createSocket("192.168.1.112",4433);
             SSLSocket ssock = (SSLSocket) ssf.createSocket(sock,"192.168.1.112", 4433, false);
             ssock.setUseClientMode(true);
-            System.out.print("Sono qui yeee1\n");
+
+            inn = ssock.getInputStream();
+            outt = ssock.getOutputStream();
+            br = new BufferedReader(new InputStreamReader(inn));
+            pwr  = new PrintWriter(new OutputStreamWriter(outt), true);
+            if (inn == null || outt == null) {
+                System.out.println("Failed to open streams to socket.");
+            }
+
+            System.out.println("Sono qui yeee1\n");
             ssock.startHandshake();
             System.out.print("Sono qui yeee\n");
             pwr.println("EHLO tester.com");
             System.out.println(br.readLine());
+            pwr.println("AUTH LOGIN");
+            System.out.println(br.readLine());
+            pwr.println(Base64.getEncoder().encodeToString("user1".getBytes()));
+            System.out.println(br.readLine());
+            pwr.println(Base64.getEncoder().encodeToString("password1".getBytes()));
+            System.out.println(br.readLine());
+            
+            //EMAIL
+            pwr.println("MAIL FROM: <francesco.zuppichini@gmail.com>");
+            System.out.println(br.readLine());
+            pwr.println("RCPT to: <francesco.zuppichini@gmail.com");
+            System.out.println(br.readLine());
+            pwr.println("DATA");
+            System.out.println(br.readLine());
+            //
+            pwr.println("Subject: Test!");
+            pwr.println("From: francesco.zuppichini@gmail.com");
+            pwr.println("To: francesco.zuppichini@gmail.com");
+            pwr.println("Ciaooooone");
+            pwr.println(".");
+            System.out.println(br.readLine());
             pwr.println("QUIT");
             System.out.println(br.readLine());
             ssock.close();  
+            sock.close();
 
         }
         catch (Exception e) {
