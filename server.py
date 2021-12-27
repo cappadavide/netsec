@@ -84,12 +84,12 @@ for i in glob.glob("../certs/*.pem"):
         ca_certs.append(i)
 print(ca_certs)
 ca_certs.append("../cert_server.pem")
-#context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
-#print(context.minimum_version,context.maximum_version)
+context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+print(context.minimum_version,context.maximum_version)
 
 #context.verify_mode = ssl.CERT_REQUIRED
 #print(context.protocol)
-context =ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)                   #capath="../certs")
+#context =ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)                   #capath="../certs")
 context.load_verify_locations(cafile=None,capath="../certs")
 context.load_cert_chain(certfile="../cert_server.pem",keyfile="../privatekey_server.pem",password=b"passphrase")
 
