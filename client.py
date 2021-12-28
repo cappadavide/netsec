@@ -123,7 +123,7 @@ def main():
     trustedCertPath = "../certs/cert_root.pem"
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect(('192.168.1.112', 4433))
+    sock.connect((hostname, port))
     print(sock.recv(1024).decode())
     sock.send(('helo tester.com\r\n').encode())
     print(sock.recv(1024).decode())
@@ -137,7 +137,7 @@ def main():
 
     # verify the chain certificate root
     context.use_certificate_file("../client.pem")
-    #context.use_privatekey_file("../client_pkey.pem")
+    context.use_privatekey_file("../client_pkey.pem")
     context.load_verify_locations(cafile="../certs/cert_root.pem")
 
     # create connection between client and server
@@ -180,17 +180,17 @@ def main():
     print(ssock.recv(1024).decode())
 
     ############# EMAIL #############
-    ssock.send(("MAIL FROM: <francesco.zuppichini@gmail.com>" + '\r\n').encode())
+    ssock.send(("MAIL FROM: <davi.somma@studenti.unina.it>" + '\r\n').encode())
     print(ssock.recv(1024).decode())
-    ssock.send(("RCPT to: <francesco.zuppichini@gmail.com>" + '\r\n').encode())
+    ssock.send(("RCPT to: <i.tieri@studenti.unina.it>" + '\r\n').encode())
     print(ssock.recv(1024).decode())
     ssock.send(("DATA" + '\r\n').encode())
     print(ssock.recv(1024).decode())
     # start to send the Data
     ssock.send(("Subject: Test!" + '\r\n').encode())
-    ssock.send(("From: francesco.zuppichini@gmail.com" + '\r\n').encode())
-    ssock.send(("To: francesco.zuppichini@gmail.com" + '\r\n').encode())
-    ssock.send(("Ciaooone" + '\r\n').encode())
+    ssock.send(("From: davi.somma@studenti.unina.it" + '\r\n').encode())
+    ssock.send(("To: i.tieri@studenti.unina.it" + '\r\n').encode())
+    ssock.send(("Ciao!" + '\r\n').encode())
     ssock.send(("\r\n.\r\n").encode())
     print(ssock.recv(1024).decode())
     ############# Exit #############
