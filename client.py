@@ -3,6 +3,7 @@ import socket
 import datetime
 import base64
 import ssl
+import time
 import hashlib
 from OpenSSL import SSL
 
@@ -121,7 +122,7 @@ def main():
     hostname = '192.168.1.112'
     port = 4433
     trustedCertPath = "../certs/cert_root.pem"
-
+    start = time.time()
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((hostname, port))
     print(sock.recv(1024).decode())
@@ -199,7 +200,8 @@ def main():
 
     ssock.close()
     sock.close()
-
+    end = time.time()
+    print(end-start)
 
 
 
