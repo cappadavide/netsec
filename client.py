@@ -87,12 +87,9 @@ def parsingString(cert : x509.Certificate):
 
 
 def checkDigitalSignature(certificates):
-    
     for i in range(len(certificates)):
-        
         try:
             if certificates[i].subject == certificates[i].issuer:
-
                 certificates[i].public_key().verify(signature=certificates[i].signature,data=certificates[i].tbs_certificate_bytes,padding=padding.PKCS1v15(),algorithm=certificates[i].signature_hash_algorithm)
 
             else:
@@ -165,7 +162,8 @@ def main():
 
     print("\nCERTIFICATE PARSING\n")
     for cert in certificates:
-        print(parsingString(cert))
+        print(cert)
+        #print(parsingString(cert))
 
 
 

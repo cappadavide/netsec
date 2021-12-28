@@ -1,6 +1,7 @@
 import java.net.*;
 import java.security.*;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.io.*;
 import javax.net.ssl.*;
@@ -13,6 +14,28 @@ public class Client{
     public static boolean checkValidity(X509Certificate c){
         Date date=new Date();
         return date.compareTo(c.getNotBefore()) >= 0 && date.compareTo(c.getNotAfter()) <=0;
+    }
+    public static boolean checkIfRootTrustAnchor(X509Certificate [] c,InputStream trustcert) throws Exception{
+        CertificateFactory fact = CertificateFactory.getInstance("X.509");
+        X509Certificate cert = (X509Certificate) fact.generateCertificate(trustcert);
+        return cert.equals(c[c.length-1]);
+    }
+    public static boolean checkDigitalSignature(X509Certificate [] certificates){
+        for(int i=0; i<certificates.length;i++){
+            try {
+                if (certificates[i].getSubjectX500Principal().equals(certificates[i].getIssuerX500Principal())){
+                    certificates[i].verify(certificates[i].getPublicKey());
+                }
+                else{
+                    certificates[i].verify(certificates[i+1].getPublicKey());
+                }
+
+            } catch (Exception e) {
+                return false;
+            
+            }
+        }
+        return true;
     }
 
     public static void main(String[] args) {
@@ -41,6 +64,7 @@ public class Client{
             if (inn == null || outt == null) {
                 System.out.println("Failed to open streams to socket.");
             }
+        
             System.out.println(br.readLine());
             pwr.println("HELO tester.com");
             System.out.println(br.readLine());
@@ -65,10 +89,18 @@ public class Client{
             ssock.startHandshake();
 
             SSLSession session = ssock.getSession();
+
             System.out.println("Lunghezza:"+session.getPeerCertificates().length); 
-            for (Certificate i: session.getPeerCertificates()){
+            X509Certificate [] certificates = (X509Certificate []) session.getPeerCertificates();
+            File trustPath = new File("../certs/cert_root.pem");
+            for (Certificate i: certificates){
                 System.out.println(Client.checkValidity((X509Certificate)i));
             }
+            System.out.println("CheckRoot:"+Client.checkIfRootTrustAnchor(certificates,(InputStream)new FileInputStream(trustPath)));
+            System.out.println("CheckSig:"+Client.checkDigitalSignature(certificates));
+
+
+
             System.out.print("Sono qui yeee\n");
             pwr.println("EHLO tester.com");
             System.out.println(br.readLine());
@@ -95,6 +127,8 @@ public class Client{
             System.out.println(br.readLine());
             pwr.println("QUIT");
             System.out.println(br.readLine());
+            br.close();
+            pwr.close();
             ssock.close();  
             sock.close();
 
