@@ -120,6 +120,13 @@ def main():
     hostname = '192.168.1.112'
     port = 4433
     trustedCertPath = "../certs/cert_root.pem"
+    # set ssl version and context
+    context = SSL.Context(method=SSL.TLS_METHOD)
+
+    # verify the chain certificate root
+    context.use_certificate_file("../client.pem")
+    context.use_privatekey_file("../client_pkey.pem")
+    context.load_verify_locations(cafile="../certs/cert_root.pem")
     start = time.time()
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((hostname, port))
@@ -128,15 +135,6 @@ def main():
     print(sock.recv(1024).decode())
     sock.send(('starttls\r\n').encode())
     print(sock.recv(1024).decode())
-
-
-    # set ssl version and context
-    context = SSL.Context(method=SSL.TLS_METHOD)
-
-    # verify the chain certificate root
-    context.use_certificate_file("../client.pem")
-    context.use_privatekey_file("../client_pkey.pem")
-    context.load_verify_locations(cafile="../certs/cert_root.pem")
 
     # create connection between client and server
     ssock = SSL.Connection(context, socket=sock)

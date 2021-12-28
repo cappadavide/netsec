@@ -56,7 +56,7 @@ public class Client{
             keystore_ca.load(in2, pwks.toCharArray());
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(keystore_ca);
-            Date start=new Date();
+            long startTime = System.nanoTime();
             Socket sock = new Socket("192.168.1.112", 4433);
             InputStream inn = sock.getInputStream();
             OutputStream outt = sock.getOutputStream();
@@ -132,7 +132,8 @@ public class Client{
             pwr.close();
             ssock.close();  
             sock.close();
-
+            long estimatedTime = System.nanoTime() - startTime;
+            System.out.println("Time in nanoseconds: "+(estimatedTime));
             
         }
         catch (Exception e) {

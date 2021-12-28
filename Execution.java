@@ -16,6 +16,8 @@ class Client2{
     private File trustPEM;
     private KeyManagerFactory kmf;
     private TrustManagerFactory tmf;
+    protected long startTime;
+    protected long estimatedTime;
     private Socket sock;
     
     public Client2(String tPath,String kPath,String tPEMPath){
@@ -53,6 +55,7 @@ class Client2{
     public boolean connect(String ip,int port){
         if (loadCerts()){
             try {
+                this.startTime = System.nanoTime();
                 this.sock = new Socket(ip, port);
 
             } catch (Exception e) {
@@ -136,6 +139,8 @@ class Client2{
             pwr.close();
             ssock.close();  
             sock.close();
+            this.estimatedTime = System.nanoTime() - startTime;
+            System.out.println("Time in nanoseconds: "+(this.estimatedTime));
 
         } catch (Exception e) {
             return false;
@@ -176,11 +181,8 @@ class Client2{
 public class Execution{
     public static void main(String[] args) {
         Client2 client = new Client2("../truststore.ks","../client.pkcs12","../certs/cert_root.pem");
-        long startTime = System.nanoTime();
         client.connect("192.168.1.112",4433);
         client.startSMTPClient();
-        long estimatedTime = System.nanoTime() - startTime;
-        System.out.println("Time in nanoseconds: "+(estimatedTime));
     }
     
 }
