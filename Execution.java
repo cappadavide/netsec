@@ -8,6 +8,7 @@ import java.util.Scanner;
 import javax.net.ssl.*;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Calendar;
 
 class Client2{
     private File trustStore;
@@ -135,6 +136,7 @@ class Client2{
             pwr.close();
             ssock.close();  
             sock.close();
+
         } catch (Exception e) {
             return false;
         }
@@ -174,8 +176,11 @@ class Client2{
 public class Execution{
     public static void main(String[] args) {
         Client2 client = new Client2("../truststore.ks","../client.pkcs12","../certs/cert_root.pem");
+        long startTime = System.nanoTime();
         client.connect("192.168.1.112",4433);
         client.startSMTPClient();
+        long estimatedTime = System.nanoTime() - startTime;
+        System.out.println("Time in nanoseconds: "+(estimatedTime));
     }
     
 }

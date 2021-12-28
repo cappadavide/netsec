@@ -56,6 +56,7 @@ public class Client{
             keystore_ca.load(in2, pwks.toCharArray());
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(keystore_ca);
+            Date start=new Date();
             Socket sock = new Socket("192.168.1.112", 4433);
             InputStream inn = sock.getInputStream();
             OutputStream outt = sock.getOutputStream();
@@ -132,6 +133,7 @@ public class Client{
             ssock.close();  
             sock.close();
 
+            
         }
         catch (Exception e) {
             e.printStackTrace();
