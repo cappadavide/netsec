@@ -51,7 +51,7 @@ def generate_certificate(client_pkey,private_key,issuer,params):
         datetime.datetime.utcnow()
     ).not_valid_after(
         # Our certificate will be valid for 10 days
-        datetime.datetime.utcnow() + datetime.timedelta(days=10)
+        datetime.datetime.utcnow() + datetime.timedelta(days=20)
     ).add_extension(
         x509.SubjectAlternativeName([x509.DNSName(u"localhost")]),
         critical=False,

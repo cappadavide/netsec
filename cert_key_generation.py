@@ -73,7 +73,7 @@ def generate_certificate(i,private_key,chain_len,params,issuer_list):
             datetime.datetime.utcnow()
         ).not_valid_after(
             #Our certificate will be valid for 10 days
-            datetime.datetime.utcnow() + datetime.timedelta(days=10)
+            datetime.datetime.utcnow() + datetime.timedelta(days=30)
         ).add_extension(
             x509.SubjectAlternativeName([x509.DNSName(u"localhost")]),
             critical=False,
@@ -96,7 +96,7 @@ def generate_certificate(i,private_key,chain_len,params,issuer_list):
             datetime.datetime.utcnow()
         ).not_valid_after(
             #Our certificate will be valid for 10 days
-            datetime.datetime.utcnow() + datetime.timedelta(days=10)
+            datetime.datetime.utcnow() + datetime.timedelta(days=30)
         ).add_extension(
             x509.SubjectAlternativeName([x509.DNSName(u"localhost")]),
             critical=False,
@@ -118,7 +118,7 @@ def generate_certificate(i,private_key,chain_len,params,issuer_list):
             datetime.datetime.utcnow()
         ).not_valid_after(
             #Our certificate will be valid for 10 days
-            datetime.datetime.utcnow() + datetime.timedelta(days=10)
+            datetime.datetime.utcnow() + datetime.timedelta(days=30)
         ).add_extension(
             x509.SubjectAlternativeName([x509.DNSName(u"localhost"),x509.IPAddress(ipaddress.IPv4Address('192.168.1.112'))]),
             critical=False,
@@ -149,7 +149,80 @@ def set_params(params,i):
     params['COMMON_NAME'] = u"mysite{}.com".format(i)
 
     return params
-    
+
+
+def generate_client_certificate(client_pkey,private_key,issuer,params):
+    # params
+    subject = x509.Name([
+
+        x509.NameAttribute(NameOID.COUNTRY_NAME, params['COUNTRY_NAME']),
+        x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, params['STATE_OR_PROVINCE_NAME']),
+        x509.NameAttribute(NameOID.LOCALITY_NAME, params['LOCALITY_NAME']),
+        x509.NameAttribute(NameOID.ORGANIZATION_NAME, params['ORGANIZATION_NAME']),
+        x509.NameAttribute(NameOID.COMMON_NAME, params['COMMON_NAME']),
+    ])
+
+    cert = x509.CertificateBuilder().subject_name(
+        subject
+    ).issuer_name(
+        issuer
+    ).public_key(
+        client_pkey.public_key()
+    ).serial_number(
+        x509.random_serial_number()
+    ).not_valid_before(
+        datetime.datetime.utcnow()
+    ).not_valid_after(
+        # Our certificate will be valid for 10 days
+        datetime.datetime.utcnow() + datetime.timedelta(days=20)
+    ).add_extension(
+        x509.SubjectAlternativeName([x509.DNSName(u"localhost")]),
+        critical=False,
+    ).sign(private_key, hashes.SHA256())  # Sign our certificate with our private key
+
+    with open(str("../client.pem"), "wb") as f:
+        f.write(cert.public_bytes(serialization.Encoding.PEM))
+
+
+
+def generateClientStuff():
+    params = {}
+    params['COUNTRY_NAME'] = u"IT"
+    params['STATE_OR_PROVINCE_NAME'] = u"Napoli"
+    params['LOCALITY_NAME'] = u"San Franciscos"
+    params['ORGANIZATION_NAME'] = u"My Company"
+    params['COMMON_NAME'] = u"mysiteclient.com"
+
+    client_pkey = rsa.generate_private_key(
+
+        public_exponent=65537,
+        key_size=2048,
+    )
+
+    # Write our key to disk for safe keeping
+    with open(str("../client_pkey.pem"), "wb") as f:
+
+        f.write(client_pkey.private_bytes(
+
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.TraditionalOpenSSL,
+            encryption_algorithm=serialization.BestAvailableEncryption(b"passphrase"),
+        ))
+
+    with open("../privatekey_root.pem", "rb") as key_file:
+        private_key = serialization.load_pem_private_key(
+
+            key_file.read(),
+
+            password=b"passphrase",
+
+        )
+    pem_data = open("../certs/cert_root.pem", "rb").read()
+    issuer_cert = x509.load_pem_x509_certificate(pem_data)
+    issuer = issuer_cert.subject
+    generate_client_certificate(client_pkey, private_key, issuer, params)
+
+
 def main():
 
     params = {}
@@ -162,5 +235,5 @@ def main():
         params = set_params(params,i)
         private_key.append(generate_private_rsakey(i,chain_len))
         cert_chain.append(generate_certificate(i,private_key,chain_len,params,issuer_list))
-
+    generateClientStuff()
 main()

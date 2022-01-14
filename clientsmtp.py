@@ -127,6 +127,9 @@ def main():
     context.use_certificate_file("../client.pem")
     context.use_privatekey_file("../client_pkey.pem")
     context.load_verify_locations(cafile="../certs/cert_root.pem")
+
+    context.set_verify(SSL.VERIFY_PEER)
+
     start = time.time()
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -140,54 +143,59 @@ def main():
     # create connection between client and server
     ssock = SSL.Connection(context, socket=sock)
     ssock.set_connect_state()
-    ssock.do_handshake()
-    print(len(ssock.get_peer_cert_chain()))
-    for cert in ssock.get_peer_cert_chain():
-        certificates.append(cert.to_cryptography())
+    try:
+        ssock.do_handshake()
 
-    # basic certification
-    for cert in certificates:
-        print(checkCertValidity(cert))
+        print(len(ssock.get_peer_cert_chain()))
+        for cert in ssock.get_peer_cert_chain():
+            certificates.append(cert.to_cryptography())
 
-    print(checkIfRootTrustAnchor(certificates, trustedCertPath))
-    print(checkDigitalSignature(certificates))
+        # basic certification
+        for cert in certificates:
+            print(checkCertValidity(cert))
 
-    print("\nCERTIFICATE PARSING\n")
-    for cert in certificates:
-        print(parsingString(cert))
+        print(checkIfRootTrustAnchor(certificates, trustedCertPath))
+        print(checkDigitalSignature(certificates))
+
+        print("\nCERTIFICATE PARSING\n")
+        for cert in certificates:
+            print(parsingString(cert))
+
+        ssock.send(('ehlo tester.com\r\n').encode())
+        print(ssock.recv(1024).decode())
+        ssock.send(('AUTH LOGIN\r\n').encode())
+        print(ssock.recv(1024).decode())
+
+        ssock.send((base64.b64encode(('user1').encode())) + ('\r\n').encode())
+        print(ssock.recv(1024).decode())
+
+        ssock.send((base64.b64encode(('password1').encode())) + ('\r\n').encode())
+        print(ssock.recv(1024).decode())
+
+        ############# EMAIL #############
+        ssock.send(("MAIL FROM: <davi.somma@studenti.unina.it>" + '\r\n').encode())
+        print(ssock.recv(1024).decode())
+        ssock.send(("RCPT to: <i.tieri@studenti.unina.it>" + '\r\n').encode())
+        print(ssock.recv(1024).decode())
+        ssock.send(("DATA" + '\r\n').encode())
+        print(ssock.recv(1024).decode())
+        # start to send the Data
+        ssock.send(("Subject: Test!" + '\r\n').encode())
+        ssock.send(("From: davi.somma@studenti.unina.it" + '\r\n').encode())
+        ssock.send(("To: i.tieri@studenti.unina.it" + '\r\n').encode())
+        ssock.send(("Ciao!" + '\r\n').encode())
+        ssock.send(("\r\n.\r\n").encode())
+        print(ssock.recv(1024).decode())
+        ############# Exit #############
+        ssock.send(("QUIT" + '\r\n').encode())
+        print(ssock.recv(1024).decode())
+
+        ssock.close()
+        sock.close()
+        end = time.time()
+        print(end - start)
+    except SSL.Error as e:
+        print(f"Certificato del server non valido!\n{e}")
 
 
-    ssock.send(('ehlo tester.com\r\n').encode())
-    print(ssock.recv(1024).decode())
-    ssock.send(('AUTH LOGIN\r\n').encode())
-    print(ssock.recv(1024).decode())
-
-    ssock.send((base64.b64encode(('user1').encode())) + ('\r\n').encode())
-    print(ssock.recv(1024).decode())
-
-    ssock.send((base64.b64encode(('password1').encode())) + ('\r\n').encode())
-    print(ssock.recv(1024).decode())
-
-    ############# EMAIL #############
-    ssock.send(("MAIL FROM: <davi.somma@studenti.unina.it>" + '\r\n').encode())
-    print(ssock.recv(1024).decode())
-    ssock.send(("RCPT to: <i.tieri@studenti.unina.it>" + '\r\n').encode())
-    print(ssock.recv(1024).decode())
-    ssock.send(("DATA" + '\r\n').encode())
-    print(ssock.recv(1024).decode())
-    # start to send the Data
-    ssock.send(("Subject: Test!" + '\r\n').encode())
-    ssock.send(("From: davi.somma@studenti.unina.it" + '\r\n').encode())
-    ssock.send(("To: i.tieri@studenti.unina.it" + '\r\n').encode())
-    ssock.send(("Ciao!" + '\r\n').encode())
-    ssock.send(("\r\n.\r\n").encode())
-    print(ssock.recv(1024).decode())
-    ############# Exit #############
-    ssock.send(("QUIT" + '\r\n').encode())
-    print(ssock.recv(1024).decode())
-
-    ssock.close()
-    sock.close()
-    end = time.time()
-    print(end-start)
 main()
