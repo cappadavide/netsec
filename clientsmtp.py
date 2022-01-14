@@ -129,6 +129,7 @@ def main():
     context.load_verify_locations(cafile="../certs/cert_root.pem")
     start = time.time()
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
     sock.connect((hostname, port))
     print(sock.recv(1024).decode())
     sock.send(('helo tester.com\r\n').encode())
@@ -140,7 +141,7 @@ def main():
     ssock = SSL.Connection(context, socket=sock)
     ssock.set_connect_state()
     ssock.do_handshake()
-
+    print(len(ssock.get_peer_cert_chain()))
     for cert in ssock.get_peer_cert_chain():
         certificates.append(cert.to_cryptography())
 
