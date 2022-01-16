@@ -3,17 +3,15 @@ import datetime
 import time
 import base64
 from OpenSSL import SSL
+
 from cryptography import x509
 from cryptography import exceptions
 from cryptography.hazmat.primitives.asymmetric import padding
+
 from cryptography.hazmat.primitives._serialization import Encoding, PublicFormat
 
-hostname = '192.168.1.112'
-port = 4433
 
-#funzione per effettuare il parsing dei campi del certificato
 def parseName(name: x509.Name):
-    
     certstr = ""
 
     for i in name:
@@ -35,9 +33,8 @@ def parseName(name: x509.Name):
 
     return certstr
 
-#funzione per effettuare il parsing delle extension del certificato
+
 def parseExtensions(ext: x509.Extensions):
-    
     certstr = ""
 
     for e in ext:
@@ -64,9 +61,8 @@ def parseExtensions(ext: x509.Extensions):
 
     return certstr
 
-#funzione per costruire il parsing completo dei certificati
+
 def parsingString(cert: x509.Certificate):
-    
     certstr = ""
     certstr += "Subject:\n"
     certstr += parseName(cert.subject)
@@ -84,10 +80,7 @@ def parsingString(cert: x509.Certificate):
     return certstr
 
 
-#funzione per effettuare il primo punto della Basic Certification Validation:
-#controllare la validità della signature del certificato di root
 def checkDigitalSignature(certificates):
-    
     for i in range(len(certificates)):
         try:
             if certificates[i].subject == certificates[i].issuer:
@@ -110,65 +103,59 @@ def checkDigitalSignature(certificates):
     return True
 
 
-#funzione per effettuare il secondo punto della Basic Certification Validation:
-#controllare la validità di ogni certificato dal punto di vista temporale(certificato scaduto o valido)
 def checkCertValidity(certificate: x509.Certificate):
-    
     current_date = datetime.datetime.now()
 
     return True if current_date >= certificate.not_valid_before and current_date <= certificate.not_valid_after else False
 
 
-#funzione per effettuare il terzo punto della Basic Certification Validation:
-#controllare la validità del certificato di root per capire se è una trust anchor
 def checkIfRootTrustAnchor(certificates, trustedCertPath):
-    
     cert = x509.load_pem_x509_certificate(open(trustedCertPath, "r").read().encode('utf-8'))
 
     return True if cert == certificates[-1] else False
 
 
 def main():
-    
     certificates = []
-
+    hostname = '192.168.1.112'
+    port = 4433
+    trustedCertPath = "../certs/cert_root.pem"
+    # set ssl version and context
     context = SSL.Context(method=SSL.TLS_METHOD)
-    
+
+    # verify the chain certificate root
     context.use_certificate_file("../client.pem")
     context.use_privatekey_file("../client_pkey.pem")
     context.load_verify_locations(cafile="../certs/cert_root.pem")
-    context.set_verify(SSL.VERIFY_PEER)#abilito il controllo dei certificati
+
+    context.set_verify(SSL.VERIFY_PEER)
 
     start = time.time()
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    #creo una connessione tra client e server
     sock.connect((hostname, port))
-    
     print(sock.recv(1024).decode())
     sock.send(('helo tester.com\r\n').encode())
     print(sock.recv(1024).decode())
     sock.send(('starttls\r\n').encode())
     print(sock.recv(1024).decode())
 
-
+    # create connection between client and server
     ssock = SSL.Connection(context, socket=sock)
-    ssock.set_connect_state()#serve a far capire che questo peer è il client
-    
+    ssock.set_connect_state()
     try:
-        ssock.do_handshake()#inizio dell'handshake
+        ssock.do_handshake()
 
+        print(len(ssock.get_peer_cert_chain()))
         for cert in ssock.get_peer_cert_chain():
             certificates.append(cert.to_cryptography())
 
-        #basic certification
-        print("Validità temporale certificati:")
+        # basic certification
         for cert in certificates:
             print(checkCertValidity(cert))
-        print("\n")
 
-        print(f"Root è una trust anchor: {checkIfRootTrustAnchor(certificates, trustedCertPath)}")
-        print(f"Signature valida: {checkDigitalSignature(certificates)}")
+        print(checkIfRootTrustAnchor(certificates, trustedCertPath))
+        print(checkDigitalSignature(certificates))
 
         print("\nCERTIFICATE PARSING\n")
         for cert in certificates:
@@ -185,31 +172,30 @@ def main():
         ssock.send((base64.b64encode(('password1').encode())) + ('\r\n').encode())
         print(ssock.recv(1024).decode())
 
+        ############# EMAIL #############
         ssock.send(("MAIL FROM: <davi.somma@studenti.unina.it>" + '\r\n').encode())
         print(ssock.recv(1024).decode())
         ssock.send(("RCPT to: <i.tieri@studenti.unina.it>" + '\r\n').encode())
         print(ssock.recv(1024).decode())
         ssock.send(("DATA" + '\r\n').encode())
         print(ssock.recv(1024).decode())
-
+        # start to send the Data
         ssock.send(("Subject: Test!" + '\r\n').encode())
         ssock.send(("From: davi.somma@studenti.unina.it" + '\r\n').encode())
         ssock.send(("To: i.tieri@studenti.unina.it" + '\r\n').encode())
         ssock.send(("Ciao!" + '\r\n').encode())
         ssock.send(("\r\n.\r\n").encode())
         print(ssock.recv(1024).decode())
-
+        ############# Exit #############
         ssock.send(("QUIT" + '\r\n').encode())
         print(ssock.recv(1024).decode())
 
         ssock.close()
         sock.close()
         end = time.time()
-        
-        print(f"Execution time: {end - start}")
-        
+        print(end - start)
     except SSL.Error as e:
-        
         print(f"Certificato del server non valido!\n{e}")
+
 
 main()
