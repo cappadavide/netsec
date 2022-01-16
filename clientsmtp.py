@@ -131,6 +131,7 @@ def checkIfRootTrustAnchor(certificates, trustedCertPath):
 def main():
     
     certificates = []
+    trustedCertPath = "../certs/cert_root.pem"
 
     context = SSL.Context(method=SSL.TLS_METHOD)
     
@@ -151,7 +152,6 @@ def main():
     sock.send(('starttls\r\n').encode())
     print(sock.recv(1024).decode())
 
-
     ssock = SSL.Connection(context, socket=sock)
     ssock.set_connect_state()#serve a far capire che questo peer è il client
     
@@ -161,7 +161,7 @@ def main():
         for cert in ssock.get_peer_cert_chain():
             certificates.append(cert.to_cryptography())
 
-        #basic certification
+        #basic certification validation
         print("Validità temporale certificati:")
         for cert in certificates:
             print(checkCertValidity(cert))

@@ -108,8 +108,7 @@ def generate_certificate(i,private_key,chain_len,params,issuer_list):
         ).add_extension(x509.BasicConstraints(ca=True, path_length=None),critical=True,
         ).sign(private_key[i-1], hashes.SHA256())
 
-    #leaf for server, without basic constraints ca=true
-    #last certificate
+    #last certificate, without basic constraints ca=true (cert_server)
     else:
         cert = x509.CertificateBuilder().subject_name(
             subject

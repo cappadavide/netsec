@@ -126,12 +126,12 @@ class Client{
             
             X509Certificate [] certificates = (X509Certificate []) session.getPeerCertificates();
             for (Certificate i: certificates){
-                System.out.println("Validità temporale: "+ Client2.checkValidity((X509Certificate)));
+                System.out.println("Validità temporale: "+ Client.checkValidity((X509Certificate)i));
             }			
        
-            System.out.println("Root è una trust anchor: "+Client2.checkIfRootTrustAnchor(certificates,(InputStream)new FileInputStream(this.trustPEM)));
+            System.out.println("Root è una trust anchor: "+Client.checkIfRootTrustAnchor(certificates,(InputStream)new FileInputStream(this.trustPEM)));
 			
-            System.out.println("Signature di root valida: "+Client2.checkDigitalSignature(certificates));
+            System.out.println("Signature di root valida: "+Client.checkDigitalSignature(certificates));
 
             /*Fine Basic Certificate Validation*/
             pwr.println("EHLO tester.com");
